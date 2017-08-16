@@ -1,6 +1,5 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +16,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-
 
             <com.cooltechworks.creditcarddesign.CreditCardView
                 android:id="@+id/credit_card_view"
@@ -52,26 +50,29 @@
             android:id="@+id/previous"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:background="@color/green_continue"
+            android:background="@drawable/orange_rectangle_drawable"
             android:gravity="center"
             android:padding="@dimen/padding_normal"
             android:text="@string/previous"
-            android:textColor="@android:color/white"
+            android:textColor="@color/winery_orange"
             android:textSize="@dimen/text_size_small"
-
             />
 
         <TextView
             android:id="@+id/next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:background="@color/green_continue"
+            android:background="@drawable/orange_rectangle_drawable"
             android:gravity="center"
             android:padding="@dimen/padding_normal"
             android:text="@string/next"
-            android:textColor="@android:color/white"
+            android:textColor="@color/winery_orange"
             android:textSize="@dimen/text_size_small"
 
             />
