@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.cooltechworks.creditcarddesign.pager.CardFragmentAdapter;
 import com.cooltechworks.creditcarddesign.pager.CardFragmentAdapter.ICardEntryCompleteListener;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.CARD_NAME_PAGE;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_CVV;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_EXPIRY;
@@ -76,6 +78,11 @@ public class CardEditActivity extends AppCompatActivity {
         if (mStartPage > 0 && mStartPage <= CARD_NAME_PAGE) {
             getViewPager().setCurrentItem(mStartPage);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void checkParams(Bundle bundle) {

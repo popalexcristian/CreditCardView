@@ -7,7 +7,7 @@
     <string name="next">NEXT</string>
     <string name="previous">PREVIOUS</string>
     <string name="done">DONE</string>
-    <string name="title_activity_main">CreditCardView Sample</string>
+    <string name="title_activity_main">NEW PAYMENT</string>
     <integer name="card_name_len">22</integer>
 
 </resources>
