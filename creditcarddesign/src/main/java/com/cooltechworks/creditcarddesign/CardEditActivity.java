@@ -282,6 +282,10 @@ public class CardEditActivity extends AppCompatActivity {
         }
     }
 
+    public static Intent getNewIntent(Context context) {
+        return new Intent(context, CardEditActivity.class);
+    }
+
     @Override
     public void onBackPressed() {
         this.finish();
