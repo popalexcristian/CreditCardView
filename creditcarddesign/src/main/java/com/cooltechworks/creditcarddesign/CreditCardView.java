@@ -15,12 +15,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cooltechworks.creditcarddesign.CardSelector.CardTypes;
+
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 
-/**
- * Created by Harish on 03/01/16.
- */
 public class CreditCardView extends FrameLayout {
 
     private static final int TEXTVIEW_CARD_HOLDER_ID = R.id.front_card_holder_name;
@@ -32,10 +31,9 @@ public class CreditCardView extends FrameLayout {
     private static final int FRONT_CARD_OUTLINE_ID = R.id.front_card_outline;
     private static final int BACK_CARD_OUTLINE_ID = R.id.back_card_outline;
 
-
     private int mCurrentDrawable;
     private String mRawCardNumber;
-    private ICustomCardSelector mSelectorLogic;
+    private String mBrand;
 
     private String mCardHolderName, mCVV, mExpiry;
 
@@ -69,13 +67,14 @@ public class CreditCardView extends FrameLayout {
     }
 
     interface ICustomCardSelector {
-        CardSelector getCardSelector(String cardNumber);
+        CardTypes getCardSelector(String cardNumber);
     }
-    
+
     private void init() {
 
         mCurrentDrawable = R.drawable.card_color_round_rect_default;
         mRawCardNumber = "";
+        mBrand = "";
         mCardnameLen = getResources().getInteger(R.integer.card_name_len);
         LayoutInflater inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -90,28 +89,26 @@ public class CreditCardView extends FrameLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs,
                 R.styleable.creditcard, 0, 0);
 
-
         String cardHolderName = a.getString(R.styleable.creditcard_card_holder_name);
         String expiry = a.getString(R.styleable.creditcard_card_expiration);
         String cardNumber = a.getString(R.styleable.creditcard_card_number);
         int cvv = a.getInt(R.styleable.creditcard_cvv, 0);
-        int cardSide = a.getInt(R.styleable.creditcard_card_side,CreditCardUtils.CARD_SIDE_FRONT);
+        int cardSide = a.getInt(R.styleable.creditcard_card_side, CreditCardUtils.CARD_SIDE_FRONT);
 
         setCardNumber(cardNumber);
         setCVV(cvv);
         setCardExpiry(expiry);
         setCardHolderName(cardHolderName);
 
-        if(cardSide == CreditCardUtils.CARD_SIDE_BACK) {
+        if (cardSide == CreditCardUtils.CARD_SIDE_BACK) {
             showBackImmediate();
         }
 
-        paintCard();
+        paintCard(mBrand);
 
         a.recycle();
 
     }
-
 
     private void flip(final boolean ltr, boolean isImmediate) {
 
@@ -124,14 +121,13 @@ public class CreditCardView extends FrameLayout {
         View layoutContentContainer = findViewById(R.id.card_container);
 
 
-        if(isImmediate) {
-            frontContentView.setVisibility(ltr?VISIBLE:GONE);
-            backContentView.setVisibility(ltr?GONE:VISIBLE);
+        if (isImmediate) {
+            frontContentView.setVisibility(ltr ? VISIBLE : GONE);
+            backContentView.setVisibility(ltr ? GONE : VISIBLE);
 
-        }
-        else {
+        } else {
 
-            int duration =  600;
+            int duration = 600;
 
             FlipAnimator flipAnimator = new FlipAnimator(frontView, backView, frontView.getWidth() / 2, backView.getHeight() / 2);
             flipAnimator.setInterpolator(new OvershootInterpolator(0.5f));
@@ -158,37 +154,24 @@ public class CreditCardView extends FrameLayout {
 
             layoutContentContainer.startAnimation(flipAnimator1);
         }
-
     }
 
     public void setCardNumber(String rawCardNumber) {
-
-
         this.mRawCardNumber = rawCardNumber == null ? "" : rawCardNumber;
+        ((TextView) findViewById(TEXTVIEW_CARD_NUMBER_ID)).setText(rawCardNumber);
 
-        String newCardNumber = mRawCardNumber;
-        for(int i=mRawCardNumber.length();i<16;i++) {
-            newCardNumber +=CreditCardUtils.CHAR_X;
-        }
-
-        String cardNumber = CreditCardUtils.handleCardNumber(newCardNumber, CreditCardUtils.DOUBLE_SPACE_SEPERATOR);
-        ((TextView)findViewById(TEXTVIEW_CARD_NUMBER_ID)).setText(cardNumber);
-
-        if(mRawCardNumber.length() == 3) {
+        if (mRawCardNumber.length() == 3) {
             revealCardAnimation();
+        } else {
+            paintCard(mBrand);
         }
-        else {
-            paintCard();
-        }
-
     }
 
     public void setCVV(int cvvInt) {
 
-        if(cvvInt == 0) {
+        if (cvvInt == 0) {
             setCVV("");
-        }
-        else {
+        } else {
             String cvv = String.valueOf(cvvInt);
             setCVV(cvv);
         }
@@ -196,101 +179,82 @@ public class CreditCardView extends FrameLayout {
     }
 
     public void showFront() {
-        flip(true,false);
+        flip(true, false);
     }
 
     public void showFrontImmediate() {
-        flip(true,true);
+        flip(true, true);
     }
 
     public void showBack() {
-        flip(false,false);
+        flip(false, false);
     }
 
     public void showBackImmediate() {
-        flip(false,true);
+        flip(false, true);
     }
 
     public void setCVV(String cvv) {
-        if(cvv == null) {
+        if (cvv == null) {
             cvv = "";
         }
 
         this.mCVV = cvv;
-        ((TextView)findViewById(TEXTVIEW_CARD_CVV_ID)).setText(cvv);
+        ((TextView) findViewById(TEXTVIEW_CARD_CVV_ID)).setText(cvv);
     }
 
     public void setCardExpiry(String dateYear) {
 
-        dateYear = dateYear == null ? "": CreditCardUtils.handleExpiration(dateYear);
+        dateYear = dateYear == null ? "" : CreditCardUtils.handleExpiration(dateYear);
 
         this.mExpiry = dateYear;
 
         ((TextView) findViewById(TEXTVIEW_CARD_EXPIRY_ID)).setText(dateYear);
-
-
     }
 
     public void setCardHolderName(String cardHolderName) {
 
         cardHolderName = cardHolderName == null ? "" : cardHolderName;
-        if(cardHolderName.length() > mCardnameLen) {
-            cardHolderName = cardHolderName.substring(0,mCardnameLen);
+        if (cardHolderName.length() > mCardnameLen) {
+            cardHolderName = cardHolderName.substring(0, mCardnameLen);
         }
 
         this.mCardHolderName = cardHolderName;
 
-        ((TextView)findViewById(TEXTVIEW_CARD_HOLDER_ID)).setText(cardHolderName);
+        ((TextView) findViewById(TEXTVIEW_CARD_HOLDER_ID)).setText(cardHolderName);
     }
 
-    public void paintCard() {
+    public void paintCard(String brand) {
 
-        CardSelector card = selectCard();
+        CardTypes card = selectCard(brand);
 
         View cardContainer = findViewById(R.id.card_outline_container);
 
-        View chipContainer = findViewById(R.id.chip_container);
-        View chipInner = findViewById(R.id.chip_inner_view);
-
-        View cardBack =  findViewById(BACK_CARD_OUTLINE_ID);
+        View cardBack = findViewById(BACK_CARD_OUTLINE_ID);
         View cardFront = findViewById(FRONT_CARD_OUTLINE_ID);
 
-
-        chipContainer.setBackgroundResource(card.getResChipOuterId());
-        chipInner.setBackgroundResource(card.getResChipInnerId());
-
         ImageView frontLogoImageView = (ImageView) cardContainer.findViewById(R.id.logo_img);
-        frontLogoImageView.setImageResource(card.getResLogoId());
+        frontLogoImageView.setImageResource(card.getCardLogo());
 
-        ImageView centerImageView = (ImageView) cardContainer.findViewById(R.id.logo_center_img);
-        centerImageView.setImageResource(card.getResCenterImageId());
-
-
-        ImageView backLogoImageView = (ImageView) findViewById(BACK_CARD_ID).findViewById(R.id.logo_img);
-        backLogoImageView.setImageResource(card.getResLogoId());
-
-        cardBack.setBackgroundResource(card.getResCardId());
-        cardFront.setBackgroundResource(card.getResCardId());
+        cardBack.setBackgroundResource(card.getCardBackground());
+        cardFront.setBackgroundResource(card.getCardBackground());
     }
 
 
     public void revealCardAnimation() {
 
-        CardSelector card = selectCard();
+        CardTypes card = selectCard(mBrand);
 
         View cardFront = findViewById(FRONT_CARD_OUTLINE_ID);
         View cardContainer = findViewById(R.id.card_outline_container);
 
-        paintCard();
+        paintCard(mBrand);
 
-        animateChange(cardContainer, cardFront, card.getResCardId());
+        animateChange(cardContainer, cardFront, card.getCardBackground());
     }
 
-    public CardSelector selectCard() {
-        if(mSelectorLogic != null) {
-            return mSelectorLogic.getCardSelector(mRawCardNumber);
-        }
-        return CardSelector.selectCard(mRawCardNumber);
+    public CardTypes selectCard(String brand) {
+        return CardSelector.selectCard(brand);
     }
 
     public void animateChange(final View cardContainer, final View v, final int drawableId) {
@@ -349,13 +313,11 @@ public class CreditCardView extends FrameLayout {
         }
     }
 
-    public void setSelectorLogic(ICustomCardSelector mSelectorLogic) {
-        this.mSelectorLogic = mSelectorLogic;
-    }
-
     public String getCardNumber() {
         return mRawCardNumber;
     }
 
-
+    public void setCardBrand(String cardBrand) {
+        this.mBrand = cardBrand;
+    }
 }

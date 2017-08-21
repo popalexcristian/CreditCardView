@@ -1,6 +1,5 @@
 package com.cooltechworks.creditcarddesign;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import java.util.Calendar;
@@ -23,7 +22,7 @@ public class CreditCardUtils {
     public static final String EXTRA_VALIDATE_EXPIRY_DATE = "expiry_date";
     public static final String EXTRA_ENTRY_START_PAGE = "start_page";
 
-    public static final int CARD_SIDE_FRONT = 1,CARD_SIDE_BACK=0;
+    public static final int CARD_SIDE_FRONT = 1, CARD_SIDE_BACK = 0;
 
     public static final int CARD_NUMBER_PAGE = 0, CARD_EXPIRY_PAGE = 1;
     public static final int CARD_CVV_PAGE = 2, CARD_NAME_PAGE = 3;
@@ -36,9 +35,8 @@ public class CreditCardUtils {
 
     public static String handleCardNumber(String inputCardNumber) {
 
-        return handleCardNumber(inputCardNumber,SPACE_SEPERATOR);
+        return handleCardNumber(inputCardNumber, SPACE_SEPERATOR);
     }
-
 
     public static String handleCardNumber(String inputCardNumber, String seperator) {
 
@@ -78,8 +76,7 @@ public class CreditCardUtils {
 
 
     public static String handleExpiration(String month, String year) {
-
-        return handleExpiration(month+year);
+        return handleExpiration(month + year);
     }
 
 
@@ -88,7 +85,7 @@ public class CreditCardUtils {
         String expiryString = dateYear.replace(SLASH_SEPERATOR, "");
 
         String text;
-        if(expiryString.length() >= 2) {
+        if (expiryString.length() >= 2) {
             String mm = expiryString.substring(0, 2);
             String yy;
             text = mm;
@@ -97,17 +94,16 @@ public class CreditCardUtils {
                 if (Integer.parseInt(mm) > 12) {
                     mm = "12"; // Cannot be more than 12.
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 mm = "01";
             }
 
-            if(expiryString.length() >=4) {
-                yy = expiryString.substring(2,4);
+            if (expiryString.length() >= 4) {
+                yy = expiryString.substring(2, 4);
 
-                try{
+                try {
                     Integer.parseInt(yy);
-                }catch (Exception e) {
+                } catch (Exception e) {
 
                     Calendar calendar = Calendar.getInstance();
                     int year = calendar.get(Calendar.YEAR);
@@ -116,15 +112,13 @@ public class CreditCardUtils {
 
                 text = mm + SLASH_SEPERATOR + yy;
 
-            }
-            else if(expiryString.length() > 2){
+            } else if (expiryString.length() > 2) {
                 yy = expiryString.substring(2);
                 text = mm + SLASH_SEPERATOR + yy;
             }
 
 
-        }
-        else {
+        } else {
             text = expiryString;
 
         }

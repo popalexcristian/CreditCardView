@@ -4,6 +4,7 @@
     <string name="previous">PRECEDENT</string>
     <string name="done">TERMINER</string>
     <string name="card_holder_name_sample">JEAN MARTIN</string>
+    <string name="go_back">BACK</string>
     <string name="card_holder">TITULAIRE</string>
     <string name="expiry">EXPIRATION</string>
     <string name="mm_yy">MM/AA</string>

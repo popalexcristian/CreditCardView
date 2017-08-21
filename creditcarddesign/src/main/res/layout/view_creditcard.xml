@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <io.codetail.widget.RevealLinearLayout
         android:id="@+id/card_outline_container"
         android:layout_width="@dimen/card_width_normal"
@@ -13,7 +12,6 @@
         android:layout_margin="@dimen/margin_xlarge"
         android:orientation="horizontal">
 
-
         <include layout="@layout/front_card_outline" />
 
         <View
@@ -21,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
-
 
 
     </io.codetail.widget.RevealLinearLayout>
@@ -34,8 +31,9 @@
         android:layout_margin="@dimen/margin_xlarge"
         android:orientation="horizontal">
 
-        <include layout="@layout/front_card" />
-        <include layout="@layout/back_card" />
+        <include layout="@layout/front_card"/>
+
+        <include layout="@layout/back_card"/>
 
     </io.codetail.widget.RevealLinearLayout>
 

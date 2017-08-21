@@ -12,16 +12,20 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionbar"
             android:windowSoftInputMode="adjustResize">
-        </activity>
-        <activity
-            android:name="com.cooltechworks.creditcarddesign.sample.MainActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cooltechworks.creditcarddesign.sample.MainActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
+        <activity android:name="com.cooltechworks.creditcarddesign.sample.TestActivity">
+
         </activity>
     </application>
 

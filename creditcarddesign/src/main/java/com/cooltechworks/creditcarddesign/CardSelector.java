@@ -1,126 +1,82 @@
 package com.cooltechworks.creditcarddesign;
 
-/**
- * Created by Harish on 01/01/16.
- */
+import static com.cooltechworks.creditcarddesign.CardSelector.CardTypes.DEFAULT;
+
 public class CardSelector {
 
-    public static final CardSelector VISA = new CardSelector(R.drawable.card_color_round_rect_purple, R.drawable.chip, R.drawable.chip_inner, android.R.color.transparent, R.drawable.ic_billing_visa_logo, CardSelector.CVV_LENGHT_DEFAULT);
-    public static final CardSelector MASTER = new CardSelector(R.drawable.card_color_round_rect_pink, R.drawable.chip_yellow, R.drawable.chip_yellow_inner, android.R.color.transparent, R.drawable.ic_billing_mastercard_logo, CardSelector.CVV_LENGHT_DEFAULT);
-    public static final CardSelector AMEX = new CardSelector(R.drawable.card_color_round_rect_green, android.R.color.transparent, android.R.color.transparent, R.drawable.img_amex_center_face, R.drawable.ic_billing_amex_logo1, CardSelector.CVV_LENGHT_AMEX);
-    public static final CardSelector DEFAULT = new CardSelector(R.drawable.card_color_round_rect_default, R.drawable.chip, R.drawable.chip_inner, android.R.color.transparent, android.R.color.transparent, CardSelector.CVV_LENGHT_DEFAULT);
-
-    private static final char PREFIX_AMEX = '3';
-    private static final char PREFIX_VISA = '4';
-    private static final char PREFIX_MASTER = '5';
-
     public static final int CVV_LENGHT_DEFAULT = 3;
-    public static final int CVV_LENGHT_AMEX = 4;
+    private static final int CVV_LENGHT_AMEX = 4;
 
+    static CardTypes selectCard(String cardNumber) {
+        if (cardNumber != null) {
 
-    private int mResCardId;
-    private int mResChipOuterId;
-    private int mResChipInnerId;
-    private int mResCenterImageId;
-    private int mResLogoId;
-    private int mCvvLength = CVV_LENGHT_DEFAULT;
-
-    public CardSelector(int mDrawableCard, int mDrawableChipOuter, int mDrawableChipInner, int mDrawableCenterImage, int logoId, int cvvLength) {
-        this.mResCardId = mDrawableCard;
-        this.mResChipOuterId = mDrawableChipOuter;
-        this.mResChipInnerId = mDrawableChipInner;
-        this.mResCenterImageId = mDrawableCenterImage;
-        this.mResLogoId = logoId;
-        this.mCvvLength = cvvLength;
-    }
-
-    public int getResCardId() {
-        return mResCardId;
-    }
-
-    public void setResCardId(int mResCardId) {
-        this.mResCardId = mResCardId;
-    }
-
-    public int getResChipOuterId() {
-        return mResChipOuterId;
-    }
-
-    public void setResChipOuterId(int mResChipOuterId) {
-        this.mResChipOuterId = mResChipOuterId;
-    }
-
-    public int getResChipInnerId() {
-        return mResChipInnerId;
-    }
-
-    public void setResChipInnerId(int mResChipInnerId) {
-        this.mResChipInnerId = mResChipInnerId;
-    }
-
-    public int getResCenterImageId() {
-        return mResCenterImageId;
-    }
-
-    public void setResCenterImageId(int mResCenterImageId) {
-        this.mResCenterImageId = mResCenterImageId;
-    }
-
-    public int getResLogoId() {
-        return mResLogoId;
-    }
-
-    public void setResLogoId(int mResLogoId) {
-        this.mResLogoId = mResLogoId;
-    }
-
-    public int getCvvLength() {
-        return mCvvLength;
-    }
-
-    public void setCvvLength(int mCvvLength) {
-        this.mCvvLength = mCvvLength;
-    }
-
-    public static CardSelector selectCard(char cardFirstChar) {
-        switch (cardFirstChar) {
-            case PREFIX_VISA:
-                return VISA;
-            case PREFIX_MASTER:
-                return MASTER;
-            case PREFIX_AMEX:
-                return AMEX;
-            default:
+            CardTypes cardType = CardTypes.getCardType(cardNumber.trim());
+            if (cardType != null) {
+                return cardType;
+            } else {
                 return DEFAULT;
-        }
-    }
-
-    public static CardSelector selectCard(String cardNumber) {
-        if (cardNumber != null && cardNumber.length() >= 3) {
-            CardSelector selector = selectCard(cardNumber.charAt(0));
-
-            if (selector != DEFAULT) {
-                int[] drawables = {R.drawable.card_color_round_rect_brown, R.drawable.card_color_round_rect_green, R.drawable.card_color_round_rect_pink, R.drawable.card_color_round_rect_purple, R.drawable.card_color_round_rect_blue};
-                int hash = cardNumber.substring(0, 3).hashCode();
-
-                if (hash < 0) {
-                    hash = hash * -1;
-                }
-
-                int index = hash % drawables.length;
-
-                int chipIndex = hash % 3;
-                int[] chipOuter = {R.drawable.chip, R.drawable.chip_yellow, android.R.color.transparent};
-                int[] chipInner = {R.drawable.chip_inner, R.drawable.chip_yellow_inner, android.R.color.transparent};
-
-                selector.setResCardId(drawables[index]);
-                selector.setResChipOuterId(chipOuter[chipIndex]);
-                selector.setResChipInnerId(chipInner[chipIndex]);
-
-                return selector;
             }
         }
-
         return DEFAULT;
+    }
+
+    enum CardTypes {
+        VISA(R.drawable.visa_card, R.drawable.ic_visa_front, CVV_LENGHT_DEFAULT, "Visa"),
+        VISAELECTRON(R.drawable.visa_card, 0, CVV_LENGHT_DEFAULT, "Visa Electron"),
+        MASTERCARD(R.drawable.master_card, 0, CVV_LENGHT_DEFAULT, "Mastercard"),
+        MAESTRO(R.drawable.master_card, 0, CVV_LENGHT_DEFAULT, "Maestro"),
+        AMERICANEXPRESS(R.drawable.card_color_round_rect_green, 0, CVV_LENGHT_AMEX, "American Express"),
+        DINERSCLUB(R.drawable.diners_club_card, 0, CVV_LENGHT_DEFAULT, "Diners Club"),
+        DISCOVER(R.drawable.discover_card, 0, CVV_LENGHT_DEFAULT, "Discover"),
+        JCB(R.drawable.jcb_card, 0, CVV_LENGHT_DEFAULT, "JCB"),
+        ELO(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "ELO"),
+        HIPERCARD(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "HiperCard"),
+        UNIONPAY(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "UnionPay"),
+        DEFAULT(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "");
+
+        private final int mCardBackground;
+        private final int mCardLogo;
+        private final String mName;
+        private final int mCvvLength;
+
+        CardTypes(int cardBackground, int cardLogo, int cvvLength, String cardType) {
+            mName = cardType;
+            mCardBackground = cardBackground;
+            mCardLogo = cardLogo;
+            mCvvLength = cvvLength;
+        }
+
+        public boolean equalsName(String otherName) {
+            return mName.equals(otherName);
+        }
+
+        public String toString() {
+            return this.mName;
+        }
+
+        public int getCardBackground() {
+            return mCardBackground;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public int getCvvLength() {
+            return mCvvLength;
+        }
+
+        public int getCardLogo() {
+            return mCardLogo;
+        }
+
+        public static CardTypes getCardType(String input) {
+            for (CardTypes cardType : CardTypes.values()) {
+                if (input.trim().toLowerCase().equals(cardType.getName().trim().toLowerCase())) {
+                    return cardType;
+                }
+            }
+            return null;
+        }
     }
 }

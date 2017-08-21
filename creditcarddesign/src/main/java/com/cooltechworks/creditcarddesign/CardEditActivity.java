@@ -2,291 +2,67 @@ package com.cooltechworks.creditcarddesign;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cooltechworks.creditcarddesign.pager.CardFragmentAdapter;
-import com.cooltechworks.creditcarddesign.pager.CardFragmentAdapter.ICardEntryCompleteListener;
+import com.stripe.android.view.CardInputWidget;
+import com.stripe.android.view.CardNumberEditText;
+import com.stripe.android.view.ExpiryDateEditText;
+import com.stripe.android.view.StripeEditText;
 
+import io.card.payment.CardIOActivity;
+import io.card.payment.CreditCard;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-import static com.cooltechworks.creditcarddesign.CreditCardUtils.CARD_NAME_PAGE;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_CVV;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_EXPIRY;
-import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_HOLDER_NAME;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_NUMBER;
-import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_ENTRY_START_PAGE;
+import static io.card.payment.CardIOActivity.EXTRA_SCAN_RESULT;
 
 
-public class CardEditActivity extends AppCompatActivity {
+public class CardEditActivity extends AppCompatActivity implements CardInputWidget.CardInputListener {
 
-
-    int mLastPageSelected = 0;
+    private static final int MY_SCAN_REQUEST_CODE = 1;
     private CreditCardView mCreditCardView;
+    private CardInputWidget mCardInputWidget;
+    private CardNumberEditText mCardNumberEt;
+    private ExpiryDateEditText mExpiryDateEt;
+    private StripeEditText mCvcNumberEt;
 
-    private String mCardNumber;
-    private String mCVV;
-    private String mCardHolderName;
-    private String mExpiry;
-    private int mStartPage = 0;
-    private CardFragmentAdapter mCardAdapter;
+    private static final String mFocus = "focus_cvc";
+    private ImageView mCardScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_card_edit);
 
-        findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mCreditCardView = (CreditCardView) findViewById(com.cooltechworks.creditcarddesign.R.id.credit_card_view);
+        mCardInputWidget = (CardInputWidget) findViewById(R.id.card_input_widget);
+        mCardInputWidget.setCardInputListener(this);
+        mCardScan = (ImageView) findViewById(R.id.card_scan_iv);
 
-                ViewPager pager = (ViewPager) findViewById(R.id.card_field_container_pager);
+        mCardNumberEt = (CardNumberEditText) mCardInputWidget.findViewById(com.stripe.android.R.id.et_card_number);
 
-                int max = pager.getAdapter().getCount();
+        mExpiryDateEt = (ExpiryDateEditText) findViewById(com.stripe.android.R.id.et_expiry_date);
+        mCvcNumberEt = (StripeEditText) findViewById(com.stripe.android.R.id.et_cvc_number);
 
-                if (pager.getCurrentItem() == max - 1) {
-                    // if last card.
-                    onDoneTapped();
-                } else {
-                    showNext();
-                }
-            }
-        });
-        findViewById(R.id.previous).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPrevious();
-            }
-        });
-
-        setKeyboardVisibility(true);
-        mCreditCardView = (CreditCardView) findViewById(R.id.credit_card_view);
-        Bundle args = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
-      
-        checkParams(args);
-        loadPager(args);
-
-        if (mStartPage > 0 && mStartPage <= CARD_NAME_PAGE) {
-            getViewPager().setCurrentItem(mStartPage);
-        }
+        setupListeners();
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    private void checkParams(Bundle bundle) {
-        if (bundle == null) {
-            return;
-        }
-        mCardHolderName = bundle.getString(EXTRA_CARD_HOLDER_NAME);
-        mCVV = bundle.getString(EXTRA_CARD_CVV);
-        mExpiry = bundle.getString(EXTRA_CARD_EXPIRY);
-        mCardNumber = bundle.getString(EXTRA_CARD_NUMBER);
-        mStartPage = bundle.getInt(EXTRA_ENTRY_START_PAGE);
-
-        int maxCvvLength = CardSelector.selectCard(mCardNumber).getCvvLength();
-        if (mCVV != null && mCVV.length() >= maxCvvLength) {
-            mCVV = mCVV.substring(0, maxCvvLength);
-        }
-
-        mCreditCardView.setCVV(mCVV);
-        mCreditCardView.setCardHolderName(mCardHolderName);
-        mCreditCardView.setCardExpiry(mExpiry);
-        mCreditCardView.setCardNumber(mCardNumber);
-
-        if (mCardAdapter != null) {
-            mCardAdapter.setMaxCVV(maxCvvLength);
-            mCardAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void refreshNextButton() {
-        ViewPager pager = (ViewPager) findViewById(R.id.card_field_container_pager);
-
-        int max = pager.getAdapter().getCount();
-
-        int text = R.string.next;
-
-        if (pager.getCurrentItem() == max - 1) {
-            text = R.string.done;
-        }
-
-        ((TextView) findViewById(R.id.next)).setText(text);
-    }
-
-    ViewPager getViewPager() {
-        return (ViewPager) findViewById(R.id.card_field_container_pager);
-    }
-
-    public void loadPager(Bundle bundle) {
-        ViewPager pager = getViewPager();
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                mCardAdapter.focus(position);
-
-                if (position == 2) {
-                    mCreditCardView.showBack();
-                } else if ((position == 1 && mLastPageSelected == 2) || position == 3) {
-                    mCreditCardView.showFront();
-                }
-
-                mLastPageSelected = position;
-
-                refreshNextButton();
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-        pager.setOffscreenPageLimit(4);
-
-        mCardAdapter = new CardFragmentAdapter(getSupportFragmentManager(), bundle);
-        mCardAdapter.setOnCardEntryCompleteListener(new ICardEntryCompleteListener() {
-            @Override
-            public void onCardEntryComplete(int currentIndex) {
-                showNext();
-            }
-
-            @Override
-            public void onCardEntryEdit(int currentIndex, String entryValue) {
-                switch (currentIndex) {
-                    case 0:
-                        mCardNumber = entryValue.replace(CreditCardUtils.SPACE_SEPERATOR, "");
-                        mCreditCardView.setCardNumber(mCardNumber);
-                        if (mCardAdapter != null) {
-                            mCardAdapter.setMaxCVV(CardSelector.selectCard(mCardNumber).getCvvLength());
-                        }
-                        break;
-                    case 1:
-                        mExpiry = entryValue;
-                        mCreditCardView.setCardExpiry(entryValue);
-                        break;
-                    case 2:
-                        mCVV = entryValue;
-                        mCreditCardView.setCVV(entryValue);
-                        break;
-                    case 3:
-                        mCardHolderName = entryValue;
-                        mCreditCardView.setCardHolderName(entryValue);
-                        break;
-                }
-            }
-        });
-
-        pager.setAdapter(mCardAdapter);
-
-        int cardSide = getIntent().getIntExtra(CreditCardUtils.EXTRA_CARD_SHOW_CARD_SIDE, CreditCardUtils.CARD_SIDE_FRONT);
-        if (cardSide == CreditCardUtils.CARD_SIDE_BACK) {
-            pager.setCurrentItem(2);
-        }
-    }
-
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(EXTRA_CARD_CVV, mCVV);
-        outState.putString(EXTRA_CARD_HOLDER_NAME, mCardHolderName);
-        outState.putString(EXTRA_CARD_EXPIRY, mExpiry);
-        outState.putString(EXTRA_CARD_NUMBER, mCardNumber);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    public void onRestoreInstanceState(Bundle inState) {
-        super.onRestoreInstanceState(inState);
-        checkParams(inState);
-    }
-
-
-    public void showPrevious() {
-        final ViewPager pager = (ViewPager) findViewById(R.id.card_field_container_pager);
-        int currentIndex = pager.getCurrentItem();
-
-        if (currentIndex == 0) {
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-
-        if (currentIndex - 1 >= 0) {
-            pager.setCurrentItem(currentIndex - 1);
-        }
-
-        refreshNextButton();
-    }
-
-    public void showNext() {
-        final ViewPager pager = (ViewPager) findViewById(R.id.card_field_container_pager);
-        CardFragmentAdapter adapter = (CardFragmentAdapter) pager.getAdapter();
-
-        int max = adapter.getCount();
-        int currentIndex = pager.getCurrentItem();
-
-        if (currentIndex + 1 < max) {
-
-            pager.setCurrentItem(currentIndex + 1);
-        } else {
-            // completed the card entry.
-            setKeyboardVisibility(false);
-        }
-
-        refreshNextButton();
-    }
-
-    private void onDoneTapped() {
-        Intent intent = new Intent();
-
-        intent.putExtra(EXTRA_CARD_CVV, mCVV);
-        intent.putExtra(EXTRA_CARD_HOLDER_NAME, mCardHolderName);
-        intent.putExtra(EXTRA_CARD_EXPIRY, mExpiry);
-        intent.putExtra(EXTRA_CARD_NUMBER, mCardNumber);
-
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    // from the link above
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Checks whether a hardware keyboard is available
-        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
-
-            LinearLayout parent = (LinearLayout) findViewById(R.id.parent);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) parent.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
-            parent.setLayoutParams(layoutParams);
-
-        }
-    }
-
-    private void setKeyboardVisibility(boolean visible) {
-        final EditText editText = (EditText) findViewById(R.id.card_number_field);
-
-        if (!visible) {
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-        } else {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
     }
 
     public static Intent getNewIntent(Context context) {
@@ -296,5 +72,150 @@ public class CardEditActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         this.finish();
+    }
+
+    private void setupListeners() {
+        mCardNumberEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mCreditCardView.setCardNumber(s.toString());
+
+                String cardBrand = mCardNumberEt.getCardBrand();
+                mCreditCardView.paintCard(cardBrand);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mCvcNumberEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mCreditCardView.setCVV(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mExpiryDateEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mCreditCardView.setCardExpiry(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mCvcNumberEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == IME_ACTION_DONE) {
+                    Intent intent = new Intent();
+
+                    intent.putExtra(EXTRA_CARD_CVV, mCreditCardView.getCVV());
+                    intent.putExtra(EXTRA_CARD_EXPIRY, mCreditCardView.getExpiry());
+                    intent.putExtra(EXTRA_CARD_NUMBER, mCreditCardView.getCardNumber());
+
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        mCardScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent scanIntent = new Intent(CardEditActivity.this, CardIOActivity.class);
+                scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
+                scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true);
+                scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true);
+
+                startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_SCAN_REQUEST_CODE) {
+            if (data != null && data.hasExtra(EXTRA_SCAN_RESULT)) {
+                CreditCard scanResult = data.getParcelableExtra(EXTRA_SCAN_RESULT);
+
+                mCreditCardView.setCardNumber(scanResult.getFormattedCardNumber());
+                mCardNumberEt.setText(scanResult.getFormattedCardNumber());
+
+                if (scanResult.isExpiryValid()) {
+                    int expirationYear = scanResult.expiryYear % 100;
+                    if (scanResult.expiryMonth < 10) {
+                        String expiryMonth = String.format("%02d", scanResult.expiryMonth);
+
+                        mCreditCardView.setCardExpiry(String.format(getString(R.string.expiration_date_placeholder), expiryMonth, expirationYear));
+                        mExpiryDateEt.setText(String.format(getString(R.string.expiration_date_placeholder), expiryMonth, expirationYear));
+                    } else {
+                        mCreditCardView.setCardExpiry(String.format(getString(R.string.expiration_date_placeholder), String.valueOf(scanResult.expiryMonth), expirationYear));
+                        mExpiryDateEt.setText(String.format(getString(R.string.expiration_date_placeholder), String.valueOf(scanResult.expiryMonth), expirationYear));
+                    }
+                    onCardComplete();
+                    onExpirationComplete();
+                }
+
+                if (scanResult.cvv != null) {
+                    mCreditCardView.setCVV(scanResult.cvv);
+                    mCvcNumberEt.setText(scanResult.cvv);
+                }
+
+            } else {
+                Snackbar.make(findViewById(android.R.id.content), "Scan was cancelled", LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onFocusChange(String focusField) {
+        if (focusField.equals("focus_cvc")) {
+            mCreditCardView.showBack();
+        } else {
+            mCreditCardView.showFront();
+        }
+    }
+
+    @Override
+    public void onCardComplete() {
+
+    }
+
+    @Override
+    public void onExpirationComplete() {
+
+    }
+
+    @Override
+    public void onCvcComplete() {
+
     }
 }
