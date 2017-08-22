@@ -37,6 +37,15 @@ public class CreditCardView extends FrameLayout {
 
     private String mCardHolderName, mCVV, mExpiry;
 
+
+    View layoutContainer = findViewById(R.id.card_outline_container);
+    View frontView = findViewById(FRONT_CARD_OUTLINE_ID);
+    View backView = findViewById(BACK_CARD_OUTLINE_ID);
+
+    private View frontContentView;
+    private View backContentView;
+    private View layoutContentContainer;
+
     int mCardnameLen;
 
     public CreditCardView(Context context) {
@@ -80,6 +89,14 @@ public class CreditCardView extends FrameLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_creditcard, this, true);
 
+        layoutContainer = findViewById(R.id.card_outline_container);
+        frontView = findViewById(FRONT_CARD_OUTLINE_ID);
+        backView = findViewById(BACK_CARD_OUTLINE_ID);
+
+        frontContentView = findViewById(FRONT_CARD_ID);
+        backContentView = findViewById(BACK_CARD_ID);
+        layoutContentContainer = findViewById(R.id.card_container);
+
     }
 
     private void init(AttributeSet attrs) {
@@ -111,16 +128,6 @@ public class CreditCardView extends FrameLayout {
     }
 
     private void flip(final boolean ltr, boolean isImmediate) {
-
-        View layoutContainer = findViewById(R.id.card_outline_container);
-        View frontView = findViewById(FRONT_CARD_OUTLINE_ID);
-        View backView = findViewById(BACK_CARD_OUTLINE_ID);
-
-        final View frontContentView = findViewById(FRONT_CARD_ID);
-        final View backContentView = findViewById(BACK_CARD_ID);
-        View layoutContentContainer = findViewById(R.id.card_container);
-
-
         if (isImmediate) {
             frontContentView.setVisibility(ltr ? VISIBLE : GONE);
             backContentView.setVisibility(ltr ? GONE : VISIBLE);
