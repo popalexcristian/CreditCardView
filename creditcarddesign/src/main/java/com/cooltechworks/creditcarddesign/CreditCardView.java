@@ -38,9 +38,9 @@ public class CreditCardView extends FrameLayout {
     private String mCardHolderName, mCVV, mExpiry;
 
 
-    View layoutContainer = findViewById(R.id.card_outline_container);
-    View frontView = findViewById(FRONT_CARD_OUTLINE_ID);
-    View backView = findViewById(BACK_CARD_OUTLINE_ID);
+    private View layoutContainer;
+    private View frontView;
+    private View backView;
 
     private View frontContentView;
     private View backContentView;
