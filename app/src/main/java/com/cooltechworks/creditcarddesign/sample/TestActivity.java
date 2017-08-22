@@ -49,6 +49,7 @@ public class TestActivity extends AppCompatActivity {
                 mCreditCardView.setCardNumber(s.toString());
 
                 String cardBrand = mCardNumberEt.getCardBrand();
+                mCreditCardView.setCardBrand(cardBrand);
                 mCreditCardView.paintCard(cardBrand);
             }
 

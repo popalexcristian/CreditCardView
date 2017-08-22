@@ -15,6 +15,7 @@ public class CreditCardUtils {
     public static final int MAX_LENGTH_CARD_HOLDER_NAME = 16;
 
     public static final String EXTRA_CARD_NUMBER = "card_number";
+    public static final String EXTRA_CARD_BRAND = "card_brand";
     public static final String EXTRA_CARD_CVV = "card_cvv";
     public static final String EXTRA_CARD_EXPIRY = "card_expiry";
     public static final String EXTRA_CARD_HOLDER_NAME = "card_holder_name";

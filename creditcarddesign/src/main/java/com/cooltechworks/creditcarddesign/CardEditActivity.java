@@ -23,6 +23,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_BRAND;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_CVV;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_EXPIRY;
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_NUMBER;
@@ -38,7 +39,6 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
     private ExpiryDateEditText mExpiryDateEt;
     private StripeEditText mCvcNumberEt;
 
-    private static final String mFocus = "focus_cvc";
     private ImageView mCardScan;
 
     @Override
@@ -83,10 +83,9 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mCreditCardView.setCardNumber(s.toString());
-
                 String cardBrand = mCardNumberEt.getCardBrand();
-                mCreditCardView.paintCard(cardBrand);
+                mCreditCardView.setCardBrand(cardBrand);
+                mCreditCardView.setCardNumber(s.toString());
             }
 
             @Override
@@ -138,6 +137,7 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
                     intent.putExtra(EXTRA_CARD_CVV, mCreditCardView.getCVV());
                     intent.putExtra(EXTRA_CARD_EXPIRY, mCreditCardView.getExpiry());
                     intent.putExtra(EXTRA_CARD_NUMBER, mCreditCardView.getCardNumber());
+                    intent.putExtra(EXTRA_CARD_BRAND, mCreditCardView.getBrand());
 
                     setResult(RESULT_OK, intent);
                     finish();

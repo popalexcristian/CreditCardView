@@ -159,12 +159,7 @@ public class CreditCardView extends FrameLayout {
     public void setCardNumber(String rawCardNumber) {
         this.mRawCardNumber = rawCardNumber == null ? "" : rawCardNumber;
         ((TextView) findViewById(TEXTVIEW_CARD_NUMBER_ID)).setText(rawCardNumber);
-
-        if (mRawCardNumber.length() == 3) {
-            revealCardAnimation();
-        } else {
-            paintCard(mBrand);
-        }
+        paintCard(mBrand);
     }
 
     public void setCVV(int cvvInt) {
@@ -319,5 +314,9 @@ public class CreditCardView extends FrameLayout {
 
     public void setCardBrand(String cardBrand) {
         this.mBrand = cardBrand;
+    }
+
+    public String getBrand() {
+        return mBrand;
     }
 }
