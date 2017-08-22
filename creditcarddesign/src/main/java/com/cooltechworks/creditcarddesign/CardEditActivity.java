@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +42,7 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
     private StripeEditText mCvcNumberEt;
 
     private ImageView mCardScan;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,21 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
 
         mExpiryDateEt = (ExpiryDateEditText) findViewById(com.stripe.android.R.id.et_expiry_date);
         mCvcNumberEt = (StripeEditText) findViewById(com.stripe.android.R.id.et_cvc_number);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setupListeners();
+        setupToolbar();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -217,5 +233,17 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
     @Override
     public void onCvcComplete() {
 
+    }
+
+    private void setupToolbar() {
+        if (mToolbar == null) return;
+
+        mToolbar.setTitle("NEW PAYMENT");
+        setSupportActionBar(mToolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 }

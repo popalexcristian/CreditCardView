@@ -18,15 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.cooltechworks.creditcarddesign.sample.MainActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity>
-        <activity android:name="com.cooltechworks.creditcarddesign.sample.TestActivity">
-
-        </activity>
     </application>
 
 </manifest>
