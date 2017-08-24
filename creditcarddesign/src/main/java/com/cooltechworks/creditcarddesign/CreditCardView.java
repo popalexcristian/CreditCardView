@@ -232,14 +232,11 @@ public class CreditCardView extends FrameLayout {
 
         View cardContainer = findViewById(R.id.card_outline_container);
 
-        View cardBack = findViewById(BACK_CARD_OUTLINE_ID);
-        View cardFront = findViewById(FRONT_CARD_OUTLINE_ID);
-
         ImageView frontLogoImageView = (ImageView) cardContainer.findViewById(R.id.logo_img);
         frontLogoImageView.setImageResource(card.getCardLogo());
 
-        cardBack.setBackgroundResource(card.getCardBackground());
-        cardFront.setBackgroundResource(card.getCardBackground());
+        backView.setBackgroundResource(card.getCardBackground());
+        frontView.setBackgroundResource(card.getCardBackground());
     }
 
 

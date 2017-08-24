@@ -21,25 +21,25 @@ public class CardSelector {
     }
 
     enum CardTypes {
-        VISA(R.drawable.visa_card, R.drawable.ic_visa_front, CVV_LENGHT_DEFAULT, "Visa"),
-        VISAELECTRON(R.drawable.visa_card, 0, CVV_LENGHT_DEFAULT, "Visa Electron"),
-        MASTERCARD(R.drawable.master_card, 0, CVV_LENGHT_DEFAULT, "Mastercard"),
-        MAESTRO(R.drawable.master_card, 0, CVV_LENGHT_DEFAULT, "Maestro"),
-        AMERICANEXPRESS(R.drawable.card_color_round_rect_green, 0, CVV_LENGHT_AMEX, "American Express"),
-        DINERSCLUB(R.drawable.diners_club_card, 0, CVV_LENGHT_DEFAULT, "Diners Club"),
-        DISCOVER(R.drawable.discover_card, 0, CVV_LENGHT_DEFAULT, "Discover"),
-        JCB(R.drawable.jcb_card, 0, CVV_LENGHT_DEFAULT, "JCB"),
-        ELO(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "ELO"),
-        HIPERCARD(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "HiperCard"),
-        UNIONPAY(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "UnionPay"),
-        DEFAULT(R.drawable.card_color_round_rect_default, 0, CVV_LENGHT_DEFAULT, "");
+        VISA(R.drawable.visa_card, CVV_LENGHT_DEFAULT, "Visa", R.drawable.ic_visa_card),
+        VISAELECTRON(R.drawable.visa_card, CVV_LENGHT_DEFAULT, "Visa Electron", R.drawable.ic_visa_card),
+        MASTERCARD(R.drawable.master_card, CVV_LENGHT_DEFAULT, "Mastercard", R.drawable.ic_mastercard_card),
+        MAESTRO(R.drawable.master_card, CVV_LENGHT_DEFAULT, "Maestro", R.drawable.ic_mastercard_card),
+        AMERICANEXPRESS(R.drawable.card_color_round_rect_green, CVV_LENGHT_AMEX, "American Express", R.drawable.ic_americanexpress_card),
+        DINERSCLUB(R.drawable.diners_club_card, CVV_LENGHT_DEFAULT, "Diners Club", R.drawable.ic_dinersclub_card),
+        DISCOVER(R.drawable.discover_card, CVV_LENGHT_DEFAULT, "Discover", R.drawable.ic_discover_card),
+        JCB(R.drawable.jcb_card, CVV_LENGHT_DEFAULT, "JCB", R.drawable.ic_jcb_card),
+        ELO(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "ELO", 0),
+        HIPERCARD(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "HiperCard", 0),
+        UNIONPAY(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "UnionPay", 0),
+        DEFAULT(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "", 0);
 
         private final int mCardBackground;
         private final int mCardLogo;
         private final String mName;
         private final int mCvvLength;
 
-        CardTypes(int cardBackground, int cardLogo, int cvvLength, String cardType) {
+        CardTypes(int cardBackground, int cvvLength, String cardType, int cardLogo) {
             mName = cardType;
             mCardBackground = cardBackground;
             mCardLogo = cardLogo;
