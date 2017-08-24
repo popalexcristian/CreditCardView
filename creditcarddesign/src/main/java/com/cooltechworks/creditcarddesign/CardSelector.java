@@ -4,7 +4,7 @@ import static com.cooltechworks.creditcarddesign.CardSelector.CardTypes.DEFAULT;
 
 public class CardSelector {
 
-    public static final int CVV_LENGHT_DEFAULT = 3;
+    private static final int CVV_LENGHT_DEFAULT = 3;
     private static final int CVV_LENGHT_AMEX = 4;
 
     static CardTypes selectCard(String cardNumber) {
