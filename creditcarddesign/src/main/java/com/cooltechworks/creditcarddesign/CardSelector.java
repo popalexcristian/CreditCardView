@@ -2,7 +2,7 @@ package com.cooltechworks.creditcarddesign;
 
 import static com.cooltechworks.creditcarddesign.CardSelector.CardTypes.DEFAULT;
 
-public class CardSelector {
+class CardSelector {
 
     private static final int CVV_LENGHT_DEFAULT = 3;
     private static final int CVV_LENGHT_AMEX = 4;
