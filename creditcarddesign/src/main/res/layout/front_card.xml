@@ -4,13 +4,6 @@
     android:layout_width="300dp"
     android:layout_height="180dp">
 
-    <ImageView
-        android:id="@+id/card_scan_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:src="@drawable/ic_camera"/>
-
     <TextView
         android:id="@+id/front_card_number"
         android:layout_width="wrap_content"
