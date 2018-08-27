@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.stripe.android.view.CardInputListener;
 import com.stripe.android.view.CardInputWidget;
 import com.stripe.android.view.CardNumberEditText;
 import com.stripe.android.view.ExpiryDateEditText;
@@ -25,7 +26,11 @@ import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_EXPI
 import static com.cooltechworks.creditcarddesign.CreditCardUtils.EXTRA_CARD_NUMBER;
 
 
-public class CardEditActivity extends AppCompatActivity implements CardInputWidget.CardInputListener {
+public class CardEditActivity extends AppCompatActivity implements CardInputListener {
+
+    private static final String FOCUS_CVC = "focus_cvc";
+    private static final String CARD_NUMBER = "focus_card";
+    private static final String CARD_EXPIRATION = "focus_expiry";
 
     private CreditCardView mCreditCardView;
     private CardInputWidget mCardInputWidget;
@@ -33,6 +38,7 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
     private ExpiryDateEditText mExpiryDateEt;
     private StripeEditText mCvcNumberEt;
 
+    private String mFocus = CARD_NUMBER;
     private Toolbar mToolbar;
 
     @Override
@@ -154,30 +160,6 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
         });
     }
 
-    @Override
-    public void onFocusChange(String focusField) {
-        if (focusField.equals("focus_cvc")) {
-            mCreditCardView.showBack();
-        } else {
-            mCreditCardView.showFront();
-        }
-    }
-
-    @Override
-    public void onCardComplete() {
-
-    }
-
-    @Override
-    public void onExpirationComplete() {
-
-    }
-
-    @Override
-    public void onCvcComplete() {
-
-    }
-
     private void setupToolbar() {
         if (mToolbar == null) return;
 
@@ -188,5 +170,58 @@ public class CardEditActivity extends AppCompatActivity implements CardInputWidg
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+    }
+
+    @Override
+    public void onFocusChange(String focusField) {
+        checkFlip(focusField);
+    }
+
+    private void checkFlip(String currentFocus) {
+        if (currentFocus.equals(mFocus)) {
+            return;
+        }
+
+        if (currentFocus.equals(FOCUS_CVC)) {
+            switch (mFocus) {
+                case CARD_NUMBER:
+                    mCreditCardView.showBack();
+                    break;
+                case CARD_EXPIRATION:
+                    mCreditCardView.showBack();
+                    break;
+                case FOCUS_CVC:
+                    break;
+            }
+        } else {
+            switch (mFocus) {
+                case CARD_NUMBER:
+                    break;
+                case CARD_EXPIRATION:
+                    break;
+                case FOCUS_CVC:
+                    mCreditCardView.showFront();
+                    break;
+            }
+        }
+        mFocus = currentFocus;
+    }
+
+    @Override
+    public void onCardComplete() {
+    }
+
+    @Override
+    public void onExpirationComplete() {
+        mCreditCardView.showBack();
+    }
+
+    @Override
+    public void onCvcComplete() {
+    }
+
+    @Override
+    public void onPostalCodeComplete() {
+
     }
 }

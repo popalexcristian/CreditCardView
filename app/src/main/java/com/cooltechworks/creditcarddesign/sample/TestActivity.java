@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 
 import com.cooltechworks.checkoutflow.R;
 import com.cooltechworks.creditcarddesign.CreditCardView;
+import com.stripe.android.view.CardInputListener;
 import com.stripe.android.view.CardInputWidget;
 import com.stripe.android.view.CardNumberEditText;
 import com.stripe.android.view.ExpiryDateEditText;
@@ -93,7 +94,7 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        mCardInputWidget.setCardInputListener(new CardInputWidget.CardInputListener() {
+        mCardInputWidget.setCardInputListener(new CardInputListener() {
             @Override
             public void onFocusChange(String focusField) {
                 if (focusField.equals("focus_cvc")) {
@@ -115,6 +116,11 @@ public class TestActivity extends AppCompatActivity {
 
             @Override
             public void onCvcComplete() {
+            }
+
+            @Override
+            public void onPostalCodeComplete() {
+
             }
         });
     }

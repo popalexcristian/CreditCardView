@@ -8,5 +8,5 @@
     <gradient
         android:startColor="@color/blue_color"
         android:endColor="@color/blue_color_gradient"
-        android:angle="270"/>
+        android:angle="@string/card_color_angle" />
 </shape>

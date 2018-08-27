@@ -31,7 +31,7 @@ class CardSelector {
         JCB(R.drawable.jcb_card, CVV_LENGHT_DEFAULT, "JCB", R.drawable.ic_jcb_card),
         ELO(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "ELO", 0),
         HIPERCARD(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "HiperCard", 0),
-        UNIONPAY(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "UnionPay", 0),
+        UNIONPAY(R.drawable.card_color_union, CVV_LENGHT_DEFAULT, "UnionPay", R.drawable.ic_union),
         DEFAULT(R.drawable.card_color_round_rect_default, CVV_LENGHT_DEFAULT, "", 0);
 
         private final int mCardBackground;

@@ -19,5 +19,6 @@
     <string name="error_card_expired">Card expired</string>
     <string name="back">BACK</string>
     <string name="expiration_date_placeholder">%01$s/%2$d</string>
+    <string name="card_color_angle">0</string>
     <integer name="card_name_len">16</integer>
 </resources>

@@ -6,6 +6,6 @@
     <gradient
         android:startColor="@color/purple_color"
         android:endColor="@color/purple_color_gradient"
-        android:angle="270"/>
+        android:angle="@string/card_color_angle" />
 
 </shape>

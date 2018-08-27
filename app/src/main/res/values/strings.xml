@@ -9,6 +9,7 @@
     <string name="done">DONE</string>
     <string name="title_activity_main">NEW PAYMENT</string>
     <integer name="card_name_len">22</integer>
+    <string name="card_color_angle">0</string>
 
 
 </resources>
